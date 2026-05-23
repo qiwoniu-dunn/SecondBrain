@@ -8,7 +8,7 @@ SecondBrain H5 是一个移动端优先的个人知识库浏览工具，用户�
 
 **数据管道**：用户手动剪藏文章 → Mac vault `raw/articles/` → Mac Mini auto-ingest（6次/天） → Claude Code 消化 → SBdaily 生成 → 推送 ECS → H5 展示。ECS digest.py 作为备用摘要生成（7/12/15/17/19/22）。
 
-**访问地址**：`https://sb.zcdunn.com`
+**访问地址**：`https://your-domain.com`
 **技术栈**：React 19 + TypeScript + Vite 7 + Tailwind CSS v3 + Three.js（WebGL 背景）+ GSAP（动画），FastAPI 后端
 **设计风格**：Liquid Glass 毛玻璃风 + 暗色底色 + 马卡龙配色 WebGL 背景
 
