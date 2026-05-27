@@ -171,7 +171,7 @@ export async function getIngestStatus(): Promise<{ done: boolean }> {
   return request('/ingest-status');
 }
 
-export async function getLastIngest(): Promise<{ time: string }> {
+export async function getLastIngest(): Promise<{ last_ingest: string }> {
   return request('/last-ingest');
 }
 

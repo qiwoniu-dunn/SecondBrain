@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { markArticle } from '@/lib/api';
 import type { Article } from '@/types';
 import { DENSITY_COLORS, getSourceColor, DENSITY_ORDER } from '@/types';
@@ -15,9 +15,27 @@ interface Props {
   onToast: (msg: string) => void;
 }
 
+/** Collapsed card height — shows ~2 title lines + source row + ~3 summary lines */
+const COLLAPSED_H = 160;
+
 export default function InputFeed({ date, articles, total, skipped, ingested, onUpdate, onToast }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const heightsRef = useRef<Record<string, number>>({});
   const [sortMode, setSortMode] = useState<SortMode>('time');
+
+  const handleCardToggle = useCallback((articleId: string) => {
+    if (expandedId === articleId) {
+      setExpandedId(null);
+      return;
+    }
+    // Measure full content height before expanding for smooth animation
+    const el = cardRefs.current[articleId];
+    if (el) {
+      heightsRef.current[articleId] = el.scrollHeight;
+    }
+    setExpandedId(articleId);
+  }, [expandedId]);
 
   const handleToggleSkip = useCallback(async (article: Article) => {
     if (article.ingested) {
@@ -155,11 +173,14 @@ export default function InputFeed({ date, articles, total, skipped, ingested, on
           return (
             <div
               key={article.id}
+              ref={el => { cardRefs.current[article.id] = el; }}
               className="liquid-glass rounded-[16px] overflow-hidden animate-fade-in-up relative"
               style={{
+                maxHeight: isExpanded ? (heightsRef.current[article.id] ?? 500) : COLLAPSED_H,
+                transition: 'max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                 opacity: article.skip_ingest ? 0.35 : 1,
                 animationDelay: `${index * 0.06}s`,
-                willChange: 'transform, opacity',
+                willChange: 'max-height',
               }}
             >
               <div
@@ -173,17 +194,13 @@ export default function InputFeed({ date, articles, total, skipped, ingested, on
 
               <div className="py-2.5 px-3.5 pl-4">
                   <button
-                    onClick={() => setExpandedId(isExpanded ? null : article.id)}
+                    onClick={() => handleCardToggle(article.id)}
                     className="w-full text-left"
                   >
                     <h3
                       className="text-sm font-medium leading-snug mb-0.5 pr-2"
                       style={{
                         color: '#F0F0F0',
-                        display: '-webkit-box',
-                        WebkitLineClamp: isExpanded ? undefined : 2,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: isExpanded ? 'visible' : 'hidden',
                       }}
                     >
                       {article.title}
@@ -205,17 +222,13 @@ export default function InputFeed({ date, articles, total, skipped, ingested, on
 
                   {article.summary && (
                     <button
-                      onClick={() => setExpandedId(isExpanded ? null : article.id)}
+                      onClick={() => handleCardToggle(article.id)}
                       className="w-full text-left"
                     >
                       <p
                         className="text-xs leading-snug"
                         style={{
                           color: 'rgba(255,255,255,0.5)',
-                          display: isExpanded ? 'block' : '-webkit-box',
-                          WebkitLineClamp: isExpanded ? undefined : 3,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: isExpanded ? 'visible' : 'hidden',
                         }}
                       >
                         {article.summary}

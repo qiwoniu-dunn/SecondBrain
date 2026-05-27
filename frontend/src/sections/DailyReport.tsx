@@ -47,8 +47,8 @@ export default function DailyReport({ date, report, onRefresh, onToast }: Props)
     async function fetchLastUpdate() {
       try {
         const result = await getLastIngest();
-        if (result.time) {
-          const t = new Date(result.time);
+        if (result.last_ingest) {
+          const t = new Date(result.last_ingest);
           const hh = String(t.getHours()).padStart(2, '0');
           const mm = String(t.getMinutes()).padStart(2, '0');
           const ss = String(t.getSeconds()).padStart(2, '0');

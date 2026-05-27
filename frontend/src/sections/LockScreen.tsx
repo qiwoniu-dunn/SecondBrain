@@ -58,8 +58,8 @@ export default function LockScreen({ onUnlock }: Props) {
   useEffect(() => {
     if (cardRef.current) {
       gsap.fromTo(cardRef.current,
-        { opacity: 0, y: 30, scale: 0.95 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power3.out', delay: 0.3 }
+        { opacity: 0, y: 20, scale: 0.97 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: 'power3.out' }
       );
     }
   }, []);
@@ -109,7 +109,7 @@ export default function LockScreen({ onUnlock }: Props) {
   }, [handleSubmit]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: '#08080f' }}>
       <GooeyBackground opacity={1} />
 
       <div
@@ -155,6 +155,8 @@ export default function LockScreen({ onUnlock }: Props) {
             style={{
               fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
               color: '#F0F0F0',
+              caretColor: '#F0F0F0',
+              WebkitTextSecurity: 'disc',
               borderBottom: `1.5px solid ${error ? 'rgba(255,45,85,0.6)' : password ? 'rgba(59,130,246,0.6)' : 'rgba(255,255,255,0.15)'}`,
             }}
           />
